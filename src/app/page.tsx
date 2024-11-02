@@ -1,9 +1,9 @@
 "use client";
+import companyData from "@/data/company_products.json";
+import patentData from "@/data/patents.json";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { Autocomplete, Box, Paper, TextField } from "@mui/material";
 import { useState } from "react";
-import companyData from "./data/company_products.json";
-import patentData from "./data/patents.json";
 
 interface Company {
   name: string;
@@ -38,7 +38,7 @@ export default function Home() {
   const [selectedPatent, setSelectedPatent] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const onPrepare = () => {
+  const onCompare = () => {
     setLoading(true);
 
     const selectedPatentId = getSelectedPatentId(selectedPatent);
@@ -89,7 +89,7 @@ export default function Home() {
         <LoadingButton
           variant="contained"
           color="primary"
-          onClick={onPrepare}
+          onClick={onCompare}
           loading={loading}
           loadingPosition="end"
           disabled={!selectedCompany || !selectedPatent || loading}
