@@ -1,25 +1,11 @@
 "use client";
 import companyData from "@/data/company_products.json";
 import patentData from "@/data/patents.json";
+import type { CompanyData } from "@/types/Company";
+import type { Patent } from "@/types/Patent";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { Autocomplete, Box, Paper, TextField } from "@mui/material";
 import { useState } from "react";
-
-interface Company {
-  name: string;
-  products: { name: string; description: string }[];
-}
-
-interface CompanyData {
-  companies: Company[];
-}
-
-interface Patent {
-  id: number;
-  publication_number: string;
-  title: string;
-  assignee: string;
-}
 
 const data: CompanyData = companyData;
 const patents: Patent[] = patentData;
