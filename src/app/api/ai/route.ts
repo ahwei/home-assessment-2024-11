@@ -4,6 +4,8 @@ import { Patent } from "@/types/Patent";
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 
+const cache = new Map();
+
 export async function GET() {
   return NextResponse.json({ data: "hello" }, { status: 200 });
 }
@@ -18,10 +20,15 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const cacheKey = `${patentId}-${companyName}`;
+
+  if (cache.has(cacheKey)) {
+    return NextResponse.json({ data: cache.get(cacheKey) }, { status: 200 });
+  }
+
   const patent: Patent | undefined = patents.find(
     (p: Patent) => p.id === patentId,
   );
-
   const company = companyProducts.companies.find((c) => c.name === companyName);
 
   if (!patent) {
@@ -50,15 +57,15 @@ export async function POST(request: NextRequest) {
       "analysis_id": "unique_id",
       "patent_id": "${patent.publication_number}",
       "company_name": "${company.name}",
-      "analysis_date": "YYYY-MM-DD",
+      "analysis_date": "${new Date().toISOString().split("T")[0]}",
       "top_infringing_products": [
-        {
-          "product_name": "Product Name",
-          "infringement_likelihood": "High/Moderate/Low",
-          "relevant_claims": ["1", "2"],
-          "explanation": "Detailed explanation...",
-          "specific_features": ["Feature1", "Feature2"]
-        }
+      {
+        "product_name": "Product Name",
+        "infringement_likelihood": "High/Moderate/Low",
+        "relevant_claims": ["1", "2"],
+        "explanation": "Detailed explanation...",
+        "specific_features": ["Feature1", "Feature2"]
+      }
       ],
       "overall_risk_assessment": "Overall risk description."
     }
@@ -88,6 +95,8 @@ export async function POST(request: NextRequest) {
     } catch (error) {
       console.error("error", error);
     }
+
+    cache.set(cacheKey, data);
 
     return NextResponse.json({ data }, { status: 200 });
   } catch (error) {
