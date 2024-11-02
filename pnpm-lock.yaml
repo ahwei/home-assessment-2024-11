@@ -14,6 +14,9 @@ importers:
       '@emotion/styled':
         specifier: ^11.13.0
         version: 11.13.0(@emotion/react@11.13.3(@types/react@18.3.12)(react@19.0.0-rc-02c0e824-20241028))(@types/react@18.3.12)(react@19.0.0-rc-02c0e824-20241028)
+      '@huggingface/inference':
+        specifier: ^2.8.1
+        version: 2.8.1
       '@mui/lab':
         specifier: 6.0.0-beta.14
         version: 6.0.0-beta.14(@emotion/react@11.13.3(@types/react@18.3.12)(react@19.0.0-rc-02c0e824-20241028))(@emotion/styled@11.13.0(@emotion/react@11.13.3(@types/react@18.3.12)(react@19.0.0-rc-02c0e824-20241028))(@types/react@18.3.12)(react@19.0.0-rc-02c0e824-20241028))(@mui/material@6.1.6(@emotion/react@11.13.3(@types/react@18.3.12)(react@19.0.0-rc-02c0e824-20241028))(@emotion/styled@11.13.0(@emotion/react@11.13.3(@types/react@18.3.12)(react@19.0.0-rc-02c0e824-20241028))(@types/react@18.3.12)(react@19.0.0-rc-02c0e824-20241028))(@types/react@18.3.12)(react-dom@19.0.0-rc-02c0e824-20241028(react@19.0.0-rc-02c0e824-20241028))(react@19.0.0-rc-02c0e824-20241028))(@types/react@18.3.12)(react-dom@19.0.0-rc-02c0e824-20241028(react@19.0.0-rc-02c0e824-20241028))(react@19.0.0-rc-02c0e824-20241028)
@@ -181,6 +184,17 @@ packages:
 
   '@floating-ui/utils@0.2.8':
     resolution: {integrity: sha512-kym7SodPp8/wloecOpcmSnWJsK7M0E5Wg8UcFA+uO4B9s5d0ywXOEro/8HM9x0rW+TljRzul/14UYz3TleT3ig==}
+
+  '@huggingface/gguf@0.1.12':
+    resolution: {integrity: sha512-m+u/ms28wE74v2VVCTncfI/KB2v897MRMOoRuYSU62P85fJ6/B2exMlHCNyAXkgDLeXBWDivXl4gPq+XbHmkaA==}
+    engines: {node: '>=20'}
+
+  '@huggingface/inference@2.8.1':
+    resolution: {integrity: sha512-EfsNtY9OR6JCNaUa5bZu2mrs48iqeTz0Gutwf+fU0Kypx33xFQB4DKMhp8u4Ee6qVbLbNWvTHuWwlppLQl4p4Q==}
+    engines: {node: '>=18'}
+
+  '@huggingface/tasks@0.12.28':
+    resolution: {integrity: sha512-kjc6PBhwo6+UmdelcdLku6Jj18bRDXlfRUweAaCSrXrX44enyNtm/L+Z8HZO1mqOAdRBVTz+MK2yWIwcb+8drg==}
 
   '@humanwhocodes/config-array@0.13.0':
     resolution: {integrity: sha512-DZLEEqFWQFiyK6h5YIeynKx7JlvCYWL0cImfSRXZ9l4Sg2efkFGTuFf6vzXjK1cq6IYkU+Eg/JizXw+TD2vRNw==}
@@ -1900,6 +1914,16 @@ snapshots:
       react-dom: 19.0.0-rc-02c0e824-20241028(react@19.0.0-rc-02c0e824-20241028)
 
   '@floating-ui/utils@0.2.8': {}
+
+  '@huggingface/gguf@0.1.12': {}
+
+  '@huggingface/inference@2.8.1':
+    dependencies:
+      '@huggingface/tasks': 0.12.28
+
+  '@huggingface/tasks@0.12.28':
+    dependencies:
+      '@huggingface/gguf': 0.1.12
 
   '@humanwhocodes/config-array@0.13.0':
     dependencies:
