@@ -27,8 +27,8 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 To build and run the Docker container:
 
 ```bash
-docker build -t min-app .
-docker run -p 3000:3000 min-app
+docker build -t mini-app .
+docker run -p 3000:3000 mini-app
 ```
 
 ## Makefile
