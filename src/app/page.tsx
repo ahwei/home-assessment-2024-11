@@ -1,6 +1,7 @@
 "use client";
 import companyData from "@/data/company_products.json";
 import patentData from "@/data/patents.json";
+import type { Analysis } from "@/types/Analysis";
 import type { CompanyData } from "@/types/Company";
 import type { Patent } from "@/types/Patent";
 import LoadingButton from "@mui/lab/LoadingButton";
@@ -31,7 +32,7 @@ export default function Home() {
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const [selectedPatent, setSelectedPatent] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [analysis, setAnalysis] = useState(null);
+  const [analysis, setAnalysis] = useState<Analysis | null>(null);
 
   const onCompare = async () => {
     setLoading(true);
@@ -103,6 +104,7 @@ export default function Home() {
           loading={loading}
           loadingPosition="end"
           disabled={!selectedCompany || !selectedPatent || loading}
+          sx={{ mb: 2 }}
         >
           Prepare
         </LoadingButton>
@@ -112,7 +114,49 @@ export default function Home() {
         {analysis && (
           <Box mt={2}>
             <Typography variant="h6">Analysis Result:</Typography>
-            <pre>{JSON.stringify(analysis, null, 2)}</pre>
+            <Typography variant="body1">
+              <strong>Analysis ID:</strong> {analysis.analysis_id}
+            </Typography>
+            <Typography variant="body1">
+              <strong>Patent ID:</strong> {analysis.patent_id}
+            </Typography>
+            <Typography variant="body1">
+              <strong>Company Name:</strong> {analysis.company_name}
+            </Typography>
+            <Typography variant="body1">
+              <strong>Analysis Date:</strong> {analysis.analysis_date}
+            </Typography>
+            <Typography variant="h6" mt={2}>
+              Top Infringing Products:
+            </Typography>
+            {analysis.top_infringing_products.map((product, index) => (
+              <Box key={index} mb={2} p={2} border={1} borderRadius={2}>
+                <Typography variant="body1">
+                  <strong>Product Name:</strong> {product.product_name}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>Infringement Likelihood:</strong>{" "}
+                  {product.infringement_likelihood}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>Relevant Claims:</strong>{" "}
+                  {product.relevant_claims.join(", ")}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>Explanation:</strong> {product.explanation}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>Specific Features:</strong>{" "}
+                  {product.specific_features.join(", ")}
+                </Typography>
+              </Box>
+            ))}
+            <Typography variant="h6" mt={2}>
+              Overall Risk Assessment:
+            </Typography>
+            <Typography variant="body1">
+              {analysis.overall_risk_assessment}
+            </Typography>
           </Box>
         )}
       </Paper>
