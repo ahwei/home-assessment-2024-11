@@ -3,4 +3,5 @@ export interface Patent {
   publication_number: string;
   title: string;
   assignee: string;
+  claims: string;
 }
