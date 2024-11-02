@@ -4,7 +4,15 @@ import patentData from "@/data/patents.json";
 import type { CompanyData } from "@/types/Company";
 import type { Patent } from "@/types/Patent";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { Autocomplete, Box, Paper, TextField } from "@mui/material";
+import {
+  Autocomplete,
+  Box,
+  Paper,
+  Skeleton,
+  TextField,
+  Typography,
+} from "@mui/material";
+import axios from "axios";
 import { useState } from "react";
 
 const data: CompanyData = companyData;
@@ -23,12 +31,28 @@ export default function Home() {
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const [selectedPatent, setSelectedPatent] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [analysis, setAnalysis] = useState(null);
 
-  const onCompare = () => {
+  const onCompare = async () => {
     setLoading(true);
+    setAnalysis(null);
 
     const selectedPatentId = getSelectedPatentId(selectedPatent);
-    console.log("Selected Patent ID:", selectedPatentId);
+
+    try {
+      const response = await axios.post("/api/ai", {
+        patentId: selectedPatentId,
+        companyName: selectedCompany,
+      });
+
+      if (response.status === 200) {
+        setAnalysis(response.data.data);
+      } else {
+        console.error(response.data.error);
+      }
+    } catch (error) {
+      console.error("Failed to fetch analysis:", error);
+    }
 
     setLoading(false);
   };
@@ -82,6 +106,15 @@ export default function Home() {
         >
           Prepare
         </LoadingButton>
+        {loading && (
+          <Skeleton variant="rectangular" width="100%" height={200} />
+        )}
+        {analysis && (
+          <Box mt={2}>
+            <Typography variant="h6">Analysis Result:</Typography>
+            <pre>{JSON.stringify(analysis, null, 2)}</pre>
+          </Box>
+        )}
       </Paper>
     </Box>
   );
