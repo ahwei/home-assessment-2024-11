@@ -23,7 +23,9 @@ const data: CompanyData = companyData;
 const patents: Patent[] = patentData;
 
 const companies = data.companies.map((company) => company.name);
-const patentTitles = patents.map((patent) => patent.title);
+const patentOptions = patents.map(
+  (patent) => `${patent.title} (${patent.publication_number})`,
+);
 
 const getSelectedPatentId = (title: string | null): number | null => {
   if (!title) return null;
@@ -96,9 +98,19 @@ export default function Home() {
         }}
       >
         <Autocomplete
-          options={patentTitles}
-          value={selectedPatent}
-          onChange={(event, newValue) => setSelectedPatent(newValue)}
+          options={patentOptions}
+          value={
+            selectedPatent
+              ? `${selectedPatent} (${
+                  patents.find((patent) => patent.title === selectedPatent)
+                    ?.publication_number
+                })`
+              : null
+          }
+          onChange={(event, newValue) => {
+            const title = newValue ? newValue.split(" (")[0] : null;
+            setSelectedPatent(title);
+          }}
           renderInput={(params) => (
             <TextField {...params} label="Patent: " fullWidth />
           )}
