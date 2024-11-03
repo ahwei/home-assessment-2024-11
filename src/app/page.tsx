@@ -62,7 +62,7 @@ export default function Home() {
         const analysisData = response.data.data;
         setAnalysis(analysisData);
         await saveAnalysis(analysisData);
-        setHistory(await getAnalysisHistory());
+        setHistory([...history.slice(-4), analysisData]);
       } else {
         console.error(response.data.error);
       }
@@ -150,14 +150,17 @@ export default function Home() {
         {history.length > 0 && (
           <Box mt={2}>
             <Typography variant="h6">History:</Typography>
-            {history.map((item, index) => (
-              <Chip
-                key={index}
-                label={`${item.company_name} + ${item.patent_id}`}
-                onClick={() => handleHistoryClick(item)}
-                sx={{ margin: 0.5 }}
-              />
-            ))}
+            {history
+              .slice()
+              .reverse()
+              .map((item, index) => (
+                <Chip
+                  key={index}
+                  label={`${item.company_name} + ${item.patent_id}`}
+                  onClick={() => handleHistoryClick(item)}
+                  sx={{ margin: 0.5 }}
+                />
+              ))}
           </Box>
         )}
       </Paper>
