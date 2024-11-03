@@ -1,20 +1,23 @@
 "use client";
+import AnalysisResult from "@/components/AnalysisResult";
 import companyData from "@/data/company_products.json";
 import patentData from "@/data/patents.json";
 import type { Analysis } from "@/types/Analysis";
 import type { CompanyData } from "@/types/Company";
 import type { Patent } from "@/types/Patent";
+import { getAnalysisHistory, saveAnalysis } from "@/utils/indexedDB";
 import LoadingButton from "@mui/lab/LoadingButton";
 import {
   Autocomplete,
   Box,
+  Chip,
   Paper,
   Skeleton,
   TextField,
   Typography,
 } from "@mui/material";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const data: CompanyData = companyData;
 const patents: Patent[] = patentData;
@@ -33,6 +36,7 @@ export default function Home() {
   const [selectedPatent, setSelectedPatent] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
+  const [history, setHistory] = useState<Analysis[]>([]);
 
   const onCompare = async () => {
     setLoading(true);
@@ -47,7 +51,10 @@ export default function Home() {
       });
 
       if (response.status === 200) {
-        setAnalysis(response.data.data);
+        const analysisData = response.data.data;
+        setAnalysis(analysisData);
+        await saveAnalysis(analysisData);
+        setHistory(await getAnalysisHistory());
       } else {
         console.error(response.data.error);
       }
@@ -58,11 +65,22 @@ export default function Home() {
     setLoading(false);
   };
 
+  const handleHistoryClick = (analysis: Analysis) => {
+    setAnalysis(analysis);
+  };
+
+  useEffect(() => {
+    (async () => {
+      const historyData = await getAnalysisHistory();
+      setHistory(historyData.slice(-5));
+    })();
+  }, []);
+
   return (
     <Box
       display="flex"
-      justifyContent="center"
-      alignItems="flex-start"
+      flexDirection="column"
+      alignItems="center"
       minHeight="100vh"
       bgcolor="#f5f5f5"
       pt={10}
@@ -82,7 +100,7 @@ export default function Home() {
           value={selectedPatent}
           onChange={(event, newValue) => setSelectedPatent(newValue)}
           renderInput={(params) => (
-            <TextField {...params} label="Patent ID: " fullWidth />
+            <TextField {...params} label="Patent: " fullWidth />
           )}
           sx={{ mb: 2 }}
         />
@@ -106,60 +124,45 @@ export default function Home() {
           disabled={!selectedCompany || !selectedPatent || loading}
           sx={{ mb: 2 }}
         >
-          Prepare
+          Analysis
         </LoadingButton>
-        {loading && (
-          <Skeleton variant="rectangular" width="100%" height={200} />
-        )}
-        {analysis && (
+        {history.length > 0 && (
           <Box mt={2}>
-            <Typography variant="h6">Analysis Result:</Typography>
-            <Typography variant="body1">
-              <strong>Analysis ID:</strong> {analysis.analysis_id}
-            </Typography>
-            <Typography variant="body1">
-              <strong>Patent ID:</strong> {analysis.patent_id}
-            </Typography>
-            <Typography variant="body1">
-              <strong>Company Name:</strong> {analysis.company_name}
-            </Typography>
-            <Typography variant="body1">
-              <strong>Analysis Date:</strong> {analysis.analysis_date}
-            </Typography>
-            <Typography variant="h6" mt={2}>
-              Top Infringing Products:
-            </Typography>
-            {analysis.top_infringing_products.map((product, index) => (
-              <Box key={index} mb={2} p={2} border={1} borderRadius={2}>
-                <Typography variant="body1">
-                  <strong>Product Name:</strong> {product.product_name}
-                </Typography>
-                <Typography variant="body1">
-                  <strong>Infringement Likelihood:</strong>{" "}
-                  {product.infringement_likelihood}
-                </Typography>
-                <Typography variant="body1">
-                  <strong>Relevant Claims:</strong>{" "}
-                  {product.relevant_claims.join(", ")}
-                </Typography>
-                <Typography variant="body1">
-                  <strong>Explanation:</strong> {product.explanation}
-                </Typography>
-                <Typography variant="body1">
-                  <strong>Specific Features:</strong>{" "}
-                  {product.specific_features.join(", ")}
-                </Typography>
-              </Box>
+            <Typography variant="h6">History:</Typography>
+            {history.map((item, index) => (
+              <Chip
+                key={index}
+                label={`${item.company_name} + ${item.patent_id}`}
+                onClick={() => handleHistoryClick(item)}
+                sx={{ margin: 0.5 }}
+              />
             ))}
-            <Typography variant="h6" mt={2}>
-              Overall Risk Assessment:
-            </Typography>
-            <Typography variant="body1">
-              {analysis.overall_risk_assessment}
-            </Typography>
           </Box>
         )}
       </Paper>
+
+      {loading ? (
+        <Paper
+          elevation={3}
+          sx={{
+            padding: 4,
+            maxWidth: 800,
+            width: "100%",
+            margin: 2,
+            textAlign: "center",
+          }}
+        >
+          <Box mt={2}>
+            <Skeleton variant="text" width="60%" />
+            <Skeleton variant="text" width="40%" />
+            <Skeleton variant="rectangular" width="100%" height={118} />
+            <Skeleton variant="text" width="80%" />
+            <Skeleton variant="text" width="50%" />
+          </Box>
+        </Paper>
+      ) : (
+        <AnalysisResult analysis={analysis} />
+      )}
     </Box>
   );
 }
