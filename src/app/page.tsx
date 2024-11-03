@@ -1,4 +1,5 @@
 "use client";
+import AnalysisLoading from "@/components/AnalysisLoading";
 import AnalysisResult from "@/components/AnalysisResult";
 import companyData from "@/data/company_products.json";
 import patentData from "@/data/patents.json";
@@ -12,7 +13,6 @@ import {
   Box,
   Chip,
   Paper,
-  Skeleton,
   TextField,
   Typography,
 } from "@mui/material";
@@ -165,28 +165,7 @@ export default function Home() {
         )}
       </Paper>
 
-      {loading ? (
-        <Paper
-          elevation={3}
-          sx={{
-            padding: 4,
-            maxWidth: 800,
-            width: "100%",
-            margin: 2,
-            textAlign: "center",
-          }}
-        >
-          <Box mt={2}>
-            <Skeleton variant="text" width="60%" />
-            <Skeleton variant="text" width="40%" />
-            <Skeleton variant="rectangular" width="100%" height={118} />
-            <Skeleton variant="text" width="80%" />
-            <Skeleton variant="text" width="50%" />
-          </Box>
-        </Paper>
-      ) : (
-        <AnalysisResult analysis={analysis} />
-      )}
+      {loading ? <AnalysisLoading /> : <AnalysisResult analysis={analysis} />}
     </Box>
   );
 }
