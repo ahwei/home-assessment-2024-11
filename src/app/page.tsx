@@ -32,7 +32,7 @@ export default function Home() {
   const [selectedPatent, setSelectedPatent] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
-  const [history, setHistory] = useState<Analysis[]>([]);
+  const [result, setResult] = useState<Analysis[]>([]);
 
   const onCompare = async () => {
     setLoading(true);
@@ -61,8 +61,6 @@ export default function Home() {
       if (response.status === 200) {
         const analysisData = response.data.data;
         setAnalysis(analysisData);
-        await saveAnalysis(analysisData);
-        setHistory([...history.slice(-4), analysisData]);
       } else {
         console.error(response.data.error);
       }
@@ -73,6 +71,13 @@ export default function Home() {
     setLoading(false);
   };
 
+  const handleSave = async () => {
+    if (analysis) {
+      await saveAnalysis(analysis);
+      setResult([...result, analysis]);
+    }
+  };
+
   const handleHistoryClick = (analysis: Analysis) => {
     setAnalysis(analysis);
   };
@@ -80,7 +85,7 @@ export default function Home() {
   useEffect(() => {
     (async () => {
       const historyData = await getAnalysisHistory();
-      setHistory(historyData.slice(-5));
+      setResult(historyData);
     })();
   }, []);
 
@@ -143,14 +148,23 @@ export default function Home() {
           loading={loading}
           loadingPosition="end"
           disabled={!selectedCompany || !selectedPatent || loading}
-          sx={{ mb: 2 }}
+          sx={{ mb: 2, mr: 2 }}
         >
           Analysis
         </LoadingButton>
-        {history.length > 0 && (
+        <LoadingButton
+          variant="outlined"
+          color="primary"
+          onClick={handleSave}
+          disabled={!analysis}
+          sx={{ mb: 2 }}
+        >
+          Save
+        </LoadingButton>
+        {result.length > 0 && (
           <Box mt={2}>
             <Typography variant="h6">History:</Typography>
-            {history
+            {result
               .slice()
               .reverse()
               .map((item, index) => (
