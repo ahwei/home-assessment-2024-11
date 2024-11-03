@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     Products:
     ${company.products.map((p) => `- ${p.name}: ${p.description}`).join("\n")}
 
-    Return the analysis in the following JSON format:
+    Return the top two infringing products of the company along with explanations of why these products potentially infringe the patent, specifically detailing which claims are at issue in the following JSON format:
 
     {
       "analysis_id": "unique_id",
@@ -59,6 +59,13 @@ export async function POST(request: NextRequest) {
       "company_name": "${company.name}",
       "analysis_date": "${new Date().toISOString().split("T")[0]}",
       "top_infringing_products": [
+      {
+        "product_name": "Product Name",
+        "infringement_likelihood": "High/Moderate/Low",
+        "relevant_claims": ["1", "2"],
+        "explanation": "Detailed explanation...",
+        "specific_features": ["Feature1", "Feature2"]
+      },
       {
         "product_name": "Product Name",
         "infringement_likelihood": "High/Moderate/Low",
