@@ -10,6 +10,18 @@ yarn install
 pnpm install
 ```
 
+Next, copy the .env file and add your OpenAI API key. You can get your API key from [here](https://platform.openai.com/account/api-keys).
+
+```sh
+cp example.env .env
+```
+
+Update the .env file with your OpenAI API key:
+
+```
+OPENAI_API_KEY=your_open_ai_api_key_here
+```
+
 Then, run the development server:
 
 ```bash
