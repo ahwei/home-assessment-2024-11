@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
   }
 
   const patent: Patent | undefined = patents.find(
-    (p: Patent) => p.id === patentId,
+    (p: Patent) => p.publication_number === patentId,
   );
   const company = companyProducts.companies.find((c) => c.name === companyName);
 

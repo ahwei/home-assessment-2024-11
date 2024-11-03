@@ -27,12 +27,6 @@ const patentOptions = patents.map(
   (patent) => `${patent.title} (${patent.publication_number})`,
 );
 
-const getSelectedPatentId = (title: string | null): number | null => {
-  if (!title) return null;
-  const patent = patents.find((patent) => patent.title === title);
-  return patent ? patent.id : null;
-};
-
 export default function Home() {
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const [selectedPatent, setSelectedPatent] = useState<string | null>(null);
@@ -44,11 +38,11 @@ export default function Home() {
     setLoading(true);
     setAnalysis(null);
 
-    const selectedPatentId = getSelectedPatentId(selectedPatent);
+    const dbHistory = await getAnalysisHistory();
 
-    const existingAnalysis = history.find(
+    const existingAnalysis = dbHistory.find(
       (item) =>
-        item.patent_id === String(selectedPatentId) &&
+        item.patent_id === selectedPatent &&
         item.company_name === selectedCompany,
     );
 
@@ -60,7 +54,7 @@ export default function Home() {
 
     try {
       const response = await axios.post("/api/ai", {
-        patentId: selectedPatentId,
+        patentId: selectedPatent,
         companyName: selectedCompany,
       });
 
@@ -113,15 +107,18 @@ export default function Home() {
           options={patentOptions}
           value={
             selectedPatent
-              ? `${selectedPatent} (${
-                  patents.find((patent) => patent.title === selectedPatent)
-                    ?.publication_number
-                })`
+              ? `${
+                  patents.find(
+                    (patent) => patent.publication_number === selectedPatent,
+                  )?.title
+                } (${selectedPatent})`
               : null
           }
           onChange={(event, newValue) => {
-            const title = newValue ? newValue.split(" (")[0] : null;
-            setSelectedPatent(title);
+            const publicationNumber = newValue
+              ? newValue.split(" (")[1].slice(0, -1)
+              : null;
+            setSelectedPatent(publicationNumber);
           }}
           renderInput={(params) => (
             <TextField {...params} label="Patent: " fullWidth />
