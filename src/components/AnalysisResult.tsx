@@ -36,6 +36,11 @@ export default function AnalysisResult({ analysis }: AnalysisResultProps) {
             <Typography variant="h6" mt={2}>
               Top Infringing Products:
             </Typography>
+            {analysis.top_infringing_products.length === 0 && (
+              <Typography variant="h6" color="success">
+                No infringing products found.
+              </Typography>
+            )}
             {analysis.top_infringing_products.map((product, index) => (
               <Box key={index} mb={2} p={2} border={1} borderRadius={2}>
                 <Typography variant="body1">

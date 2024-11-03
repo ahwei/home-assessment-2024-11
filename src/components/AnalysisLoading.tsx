@@ -30,6 +30,13 @@ const AnalysisLoading = () => {
           <Skeleton variant="text" width="80%" />
           <Skeleton variant="text" width="80%" />
         </Box>
+        <Box mb={2} p={2} border={1} borderRadius={2}>
+          <Skeleton variant="text" width="80%" />
+          <Skeleton variant="text" width="80%" />
+          <Skeleton variant="text" width="80%" />
+          <Skeleton variant="text" width="80%" />
+          <Skeleton variant="text" width="80%" />
+        </Box>
         <Typography variant="h6" mt={2}>
           <Skeleton width="50%" />
         </Typography>
