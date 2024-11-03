@@ -46,6 +46,18 @@ export default function Home() {
 
     const selectedPatentId = getSelectedPatentId(selectedPatent);
 
+    const existingAnalysis = history.find(
+      (item) =>
+        item.patent_id === String(selectedPatentId) &&
+        item.company_name === selectedCompany,
+    );
+
+    if (existingAnalysis) {
+      setAnalysis(existingAnalysis);
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await axios.post("/api/ai", {
         patentId: selectedPatentId,
